@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import {useState, useRef, useEffect, useCallback} from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { motion, AnimatePresence } from "framer-motion"
@@ -18,48 +18,49 @@ export default function CardPersonalizer({ images }: CardPersonalizerProps) {
   const [colorFilter, setColorFilter] = useState("none")
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  const applyToCard = () => {
-    const canvas = canvasRef.current
+  const applyToCard = useCallback(() => {
+    const canvas = canvasRef.current;
     if (canvas) {
-      const ctx = canvas.getContext("2d")
+      const ctx = canvas.getContext("2d");
       if (ctx) {
-        const img = new Image()
+        const img = new Image();
         img.onload = () => {
-          ctx.clearRect(0, 0, canvas.width, canvas.height)
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
           // Apply color filter
           if (colorFilter === "mastercard") {
-            const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0)
-            gradient.addColorStop(0, "rgba(235, 0, 27, 0.7)") // Mastercard red
-            gradient.addColorStop(1, "rgba(247, 158, 27, 0.7)") // Mastercard orange
-            ctx.fillStyle = gradient
-            ctx.fillRect(0, 0, canvas.width, canvas.height)
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+            gradient.addColorStop(0, "rgba(235, 0, 27, 0.7)"); // Mastercard red
+            gradient.addColorStop(1, "rgba(247, 158, 27, 0.7)"); // Mastercard orange
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
           } else if (colorFilter === "black") {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.6)"
-            ctx.fillRect(0, 0, canvas.width, canvas.height)
+            ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
           }
 
           // Add card details
-          ctx.fillStyle = "white"
-          ctx.font = "20px Arial"
-          ctx.fillText("John Doe", 20, canvas.height - 60)
-
-          ctx.font = "16px Arial"
-          ctx.fillText("**** **** **** 1234", 20, canvas.height - 30)
+          ctx.fillStyle = "white";
+          ctx.font = "20px Arial";
+          ctx.fillText("John Doe", 20, canvas.height - 60);
+          ctx.font = "16px Arial";
+          ctx.fillText("**** **** **** 1234", 20, canvas.height - 30);
 
           // Add Mastercard logo
-          const logo = new Image()
+          const logo = new Image();
           logo.onload = () => {
-            ctx.drawImage(logo, canvas.width - 80, 20, 60, 40)
-          }
-          logo.src = "/mastercard-logo.png"
-        }
-        img.crossOrigin = "anonymous"
-        img.src = cardImage
+            const logoWidth = 60;
+            const logoHeight = 40;
+            ctx.drawImage(logo, canvas.width - logoWidth - 20, canvas.height - logoHeight - 20, logoWidth, logoHeight);
+          };
+          logo.src = "/image-generation/mastercard-logo.png";
+        };
+        img.crossOrigin = "anonymous";
+        img.src = cardImage;
       }
     }
-  }
+  }, [canvasRef, cardImage, colorFilter]);
 
   // Update effect to watch for both image and filter changes
   useEffect(() => {
@@ -84,15 +85,6 @@ export default function CardPersonalizer({ images }: CardPersonalizerProps) {
   const prevImage = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length)
     setCardImage(images[(currentIndex - 1 + images.length) % images.length])
-  }
-
-  const getVisibleImages = () => {
-    const result = []
-    for (let i = 0; i < 3; i++) {
-      const index = (currentIndex + i) % images.length
-      result.push({ image: images[index], index })
-    }
-    return result
   }
 
   return (

@@ -49,7 +49,8 @@ export default function ImageGenerator() {
     e.preventDefault()
     setIsLoading(true)
 
-    // Create prompt from form data
+    // Create prompt from form data. Keep in code as example only.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const prompt = `Create a high-impact image of ${formData.subject} that captures a ${formData.style} vision. 
                    Render the subject with detailed, photorealistic techniques, showcasing elements such as 
                    ${formData.technique} to emphasize depth and clarity. Infuse the scene with a ${formData.mood} 
