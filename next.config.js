@@ -2,6 +2,7 @@
 const nextConfig = {
     basePath: "/image-generation",
     output: "export",
-    reactStrictMode: true,};
+    reactStrictMode: true,
+};
 
-export default nextConfig;
+module.exports = nextConfig;
